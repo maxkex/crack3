@@ -34,7 +34,7 @@ char ** loadFileAA(char *filename, int *size)
 	char **arr = malloc(capacity * sizeof(char *));
 
 	// Read the file line by line.
-	char line[1000];
+	char line[50];
     while (fgets(line, sizeof(line), in)) {
         // Remove newline character if present
         char *newline = strchr(line, '\n');
@@ -65,11 +65,11 @@ char ** loadFileAA(char *filename, int *size)
 
 // Search the array for the target string.
 // Return the found string or NULL if not found.
-char * stringSearchAA(char *target, char **lines, int size)
+char * stringSearchAA(char *target, char **arr, int size)
 {
 	for(int i = 0; i < size; i++) {
-		if(strcmp(target, lines[i]) == 0){
-			return lines[i];
+		if(strcmp(target, arr[i]) == 0){
+			return arr[i];
 		} 
 	}
 	return NULL;

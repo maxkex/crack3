@@ -24,18 +24,18 @@ int main(int argc, char *argv[])
     //   Use either a 2D array or an array of arrays.
     //   Use the loadFile function from fileutil.c
     //   Uncomment the appropriate statement.
-    int size;
+    int size = 0;
     //char (*hashes)[HASH_LEN] = loadFile(argv[1], &size);
     char **hashes = loadFileAA(argv[1], &size);
     
     // CHALLENGE1: Sort the hashes using qsort.
-    
+    printf("Size of the array: %d\n", size);
     // TODO
     // Open the password file for reading.
 
     FILE *password_file = fopen(argv[2], "r");
-    if (password_file == NULL) 
-    {
+    if (password_file == NULL) {
+
         perror("Error opening password file");
         exit(1);
     }
@@ -55,14 +55,19 @@ int main(int argc, char *argv[])
         {
             *newline = '\0';
         }
+
         char *hash = md5(line, strlen(line));
+
+        printf("%s is hash of %s\n", hash, line);//debugging
+
         if (hash) 
         {
-            char *found_hash = stringSearchAA(hash, hashes, size);
+            //found_hash is always turning out to be null!!!!!!!
+            char * found_hash = stringSearchAA(hash, hashes, size);
             if (found_hash) 
             {
-            printf("Found: %s %s\n", line, found_hash);
-            found++;
+                printf("Found: %s %s\n", line, found_hash);
+                found++;
             }
             free(hash);
         }
