@@ -26,18 +26,48 @@ int main(int argc, char *argv[])
     //   Uncomment the appropriate statement.
     int size;
     //char (*hashes)[HASH_LEN] = loadFile(argv[1], &size);
-    //char **hashes = loadFile(argv[1], &size);
+    char **hashes = loadFileAA(argv[1], &size);
     
     // CHALLENGE1: Sort the hashes using qsort.
     
     // TODO
     // Open the password file for reading.
 
+    FILE *password_file = fopen(argv[2], "r");
+    if (password_file == NULL) 
+    {
+        perror("Error opening password file");
+        exit(1);
+    }
+
     // TODO
-    // For each password, hash it, then use the array search
+    // For each password, hash it, then use the array searc
     // function from fileutil.h to find the hash.
     // If you find it, display the password and the hash.
     // Keep track of how many hashes were found.
+
+    char line[PASS_LEN];
+    int found = 0;
+    while (fgets(line, PASS_LEN, password_file)) 
+    {
+        char *newline = strchr(line, '\n');
+        if (newline) 
+        {
+            *newline = '\0';
+        }
+        char *hash = md5(line, strlen(line));
+        if (hash) 
+        {
+            char *found_hash = stringSearchAA(hash, hashes, size);
+            if (found_hash) 
+            {
+            printf("Found: %s %s\n", line, found_hash);
+            found++;
+            }
+            free(hash);
+        }
+    }
+
     // CHALLENGE1: Use binary search instead of linear search.
 
     // TODO
@@ -45,4 +75,8 @@ int main(int argc, char *argv[])
     //   Close the file
     //   Display the number of hashes found.
     //   Free up memory.
+    fclose(password_file);
+    printf("Found %d hashes\n", found);
+    freeAA(hashes, size);
+    
 }
