@@ -19,69 +19,75 @@
 // entries in the array (not the total array length).
 char ** loadFileAA(char *filename, int *size)
 {
-	FILE *in = fopen(filename, "r");
-	if (!in)
-	{
-	    perror("Can't open file");
-	    exit(1);
-	}
-	
-	// TODO
-	// Allocate memory for an array of strings (arr).
+    FILE *in = fopen(filename, "r");
+    if (!in)
+    {
+        perror("Can't open file");
+        exit(1);
+    }
+    
+    // TODO
+    // Allocate memory for an array of strings (arr).
+    int capacity = 100;
+    *size = 0;
 
-	*size = 0;
-	int capacity = 100;
-	char **arr = malloc(capacity * sizeof(char *));
-
-	// Read the file line by line.
-	char line[50];
+    char **arr = malloc(capacity * sizeof(char *));
+    // Read the file line by line.
+    char line[1000];
     while (fgets(line, sizeof(line), in)) {
-        // Remove newline character if present
-        char *newline = strchr(line, '\n');
-        if (newline) {
-            *newline = '\0';
+        //   Trim newline.
+        char *nl = strchr(line, '\n');
+        if (nl) *nl = '\0';
+
+        //   Expand array if necessary (realloc).
+        if(*size >= capacity) {
+            capacity += 100;
+            arr = realloc(arr, capacity * sizeof(char *));
         }
-
-		// Expand array if necessary (realloc).
-		if (*size >= capacity) {
-			capacity += 50;
-			arr = realloc(arr, capacity * sizeof(char *));
-		}
-
-		// Allocate memory for the string (str).
-		arr[*size] = malloc(strlen(line + 1));
-
-		// Copy each line into the string (use strcpy).
-		strcpy(arr[*size], line);
-		*size = *size + 1;
-
-
-	}
-
-	//   Attach the string to the large array (assignment =).
-	fclose(in);
-	return arr;
+        //   Allocate memory for the string (str).
+        arr[*size] = malloc(strlen(line + 1));
+        //   Copy each line into the string (use strcpy).
+        strcpy(arr[*size], line);
+        *size = *size + 1;
+    }
+    //   Attach the string to the large array (assignment =).
+    // Close the file.
+    fclose(in);
+    
+    // Return pointer to the array of strings.
+    return arr;
 }
+
 
 // Search the array for the target string.
 // Return the found string or NULL if not found.
-char * stringSearchAA(char *target, char **arr, int size)
+char * substringSearchAA(char *target, char **lines, int size)
 {
-	for(int i = 0; i < size; i++) {
-		if(strcmp(target, arr[i]) == 0){
-			return arr[i];
-		} 
-	}
-	return NULL;
+    for(int i = 0; i < size; i++) {
+        if(strstr(lines[i], target)) return lines[i];
+    }
+    return NULL;
 }
 
+// char * substringSearch2D(char *target, char (*lines)[COLS], int size)
+// {
+    
+//     return NULL;
+// }
 
 // Free the memory used by the array
 void freeAA(char ** arr, int size)
 {
-	for(int i = 0; i < size; i++) {
-		free(arr[i]);
-	}
-	free(arr);
+    for(int i = 0; i < size; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+int linearSearch(char *target, char **arr, int size) {
+    for (int i = 0; i < size; i++) {
+        if (strcmp(arr[i], target) == 0) return i;
+    }
+    return -1; // not found
 }
 

@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     //   Use either a 2D array or an array of arrays.
     //   Use the loadFile function from fileutil.c
     //   Uncomment the appropriate statement.
-    int size = 0;
+    int size;
     //char (*hashes)[HASH_LEN] = loadFile(argv[1], &size);
     char **hashes = loadFileAA(argv[1], &size);
     
@@ -58,19 +58,22 @@ int main(int argc, char *argv[])
 
         char *hash = md5(line, strlen(line));
 
-        printf("%s is hash of %s\n", hash, line);//debugging
-
-        if (hash) 
+        if(!hash)
         {
-            //found_hash is always turning out to be null!!!!!!!
-            char * found_hash = stringSearchAA(hash, hashes, size);
-            if (found_hash) 
-            {
-                printf("Found: %s %s\n", line, found_hash);
-                found++;
-            }
-            free(hash);
+            printf("Failed to compute hash for %s\n", line);
+            continue;
         }
+
+        //printf("%s is hash of %s\n", hash, line); //debugging
+
+        int found_index = linearSearch(hash, hashes, size);
+        //printf("Found index: %d\n", found_index);
+        if (found_index >= 0) 
+        {
+            printf("%s %s\n", hash, line);
+            found++;
+        }
+        free(hash);
     }
 
     // CHALLENGE1: Use binary search instead of linear search.
